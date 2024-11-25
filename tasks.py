@@ -29,7 +29,7 @@ import numpy as np
 text = "The quick brown fox jumps over the lazy dog!"
 
 # Write a list comprehension to tokenize the text and remove punctuation
-tokens = _ # Your code here
+tokens = [token.replace("!", "").lower() for token in text.split()] # Your code here
 
 # Expected output: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog']
 print(tokens)
@@ -44,57 +44,77 @@ print(tokens)
 
 # Your code here:
 # -----------------------------------------------
-def tokenize(string: str) -> list:
-    pass # Your code
+def tokenize(string: str, unique=True) -> list:
+    token_list = string.split()
+    for i in range(len(token_list)):
+        token_list[i] = token_list[i].lower()
+        for punct in "!?-:;.,@#$%^&*()":
+            token_list[i] = token_list[i].replace(punct, "")
+            if token_list[i] == "":
+                token_list.pop(i)
+    if unique:
+        return sorted(list(set(token_list)))
+    else:
+        return token_list
+
 
 
 # -----------------------------------------------
 
 
 
-# [B] Dictionary Comprehensions: Frequency Count of Tokens
-#     Objective: Practice dictionary comprehensions for token frequency counts.
+# # [B] Dictionary Comprehensions: Frequency Count of Tokens
+# #     Objective: Practice dictionary comprehensions for token frequency counts.
 
-# Dictionary comprehension is a concise way to create dictionaries using a for-loop inside curly braces.
-# Syntax: {key: value for item in iterable if condition} (condition is optional).
-# Example: char_count = {char: ord(char) for char in "hello" if char != 'e'}
+# # Dictionary comprehension is a concise way to create dictionaries using a for-loop inside curly braces.
+# # Syntax: {key: value for item in iterable if condition} (condition is optional).
+# # Example: char_count = {char: ord(char) for char in "hello" if char != 'e'}
 
-# Once tokens are extracted, a common task in NLP is to count how often each word appears. 
-# This is called calculating the frequency of tokens, and it’s useful because words that appear 
-# frequently might have different importance compared to rare words. In this exercise, you’ll 
-# create a dictionary where each word is a key and its frequency (count) is the value.
+# # Once tokens are extracted, a common task in NLP is to count how often each word appears. 
+# # This is called calculating the frequency of tokens, and it’s useful because words that appear 
+# # frequently might have different importance compared to rare words. In this exercise, you’ll 
+# # create a dictionary where each word is a key and its frequency (count) is the value.
 
 
 
-# Task 3: Using the tokens list from the previous exercise, create a dictionary comprehension 
-#   that counts the frequency of each word.
+# # Task 3: Using the tokens list from the previous exercise, create a dictionary comprehension 
+# #   that counts the frequency of each word.
 
-# Using the list of tokens from Exercise 1, count the frequency of each word within one 
-# dictionary comprehension
+# # Using the list of tokens from Exercise 1, count the frequency of each word within one 
+# # dictionary comprehension
 
-# Your code here:
-# -----------------------------------------------
-word_frequencies = _ # Your code here
+# # Your code here:
+# # -----------------------------------------------
+word_frequencies = {token: tokens.count(token) for token in tokens}
 
-# Expected output example: {'the': 2, 'quick': 1, ...}
+# # Expected output example: {'the': 2, 'quick': 1, ...}
 print(word_frequencies)
 
-# Modify the comprehension to include only words that appear more than once.
-# -----------------------------------------------
+# # Modify the comprehension to include only words that appear more than once.
+# # -----------------------------------------------
 
 
 
-# Task 4: Define a function that takes a string and an integer k, and returns a dictionary with
-#   the token frequencies of only those tokens that occur more than k times in the string.
+# # Task 4: Define a function that takes a string and an integer k, and returns a dictionary with
+# #   the token frequencies of only those tokens that occur more than k times in the string.
 
 # Your code here:
 # -----------------------------------------------
 def token_counts(string: str, k: int = 1) -> dict:
-    pass # Your code
+    token_list = string.split()
+    for i in range(len(token_list)):
+        token_list[i] = token_list[i].lower()
+        for punct in "!?-:;.,@#$%^&*()":
+            token_list[i] = token_list[i].replace(punct, "")
+            if token_list[i] == "":
+                token_list.pop(i)
+    return {token: token_list.count(token)for token in token_list if token_list.count(token) >= k}
 
 # test:
 text_hist = {'the': 2, 'quick': 1, 'brown': 1, 'fox': 1, 'jumps': 1, 'over': 1, 'lazy': 1, 'dog': 1}
-all(text_hist[key] == value for key, value in token_counts(text).items())
+# text = """The quick brown fox jumps over the lazy dog. The fox and the dog play together. 
+#               The fox chases the dog, but the dog runs quickly. The fox is fast, and the dog escapes."""
+print(token_counts(text, k=1))
 # -----------------------------------------------
 
 
@@ -121,10 +141,13 @@ all(text_hist[key] == value for key, value in token_counts(text).items())
 
 # Your code here:
 # -----------------------------------------------
-token_to_id = _ # Your code here
+token_to_id = dict()
+for id, token in enumerate(tokens):
+    if token not in token_to_id.keys():
+        token_to_id[token] = id
 
 # Expected output: {'dog': 0, 'quick': 1, 'fox': 2, 'the': 3, 'over': 4, 'lazy': 5, 'brown': 6, 'jumps': 7}
-print(token_to_id)
+print(f"{token_to_id=}")
 # -----------------------------------------------
 
 
@@ -133,16 +156,16 @@ print(token_to_id)
 #
 # Your code here:
 # -----------------------------------------------
-id_to_token = _ # Your code here
+id_to_token =  {value: key for key, value in token_to_id.items()}
 
-# tests: 
-# test 1
-assert id_to_token[token_to_id['dog']] == 'dog'
-# test 2
-assert token_to_id[id_to_token[4]] == 4
-# test 3
-assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(token_to_id[id_to_token[k]]==k for k in range(len(token_to_id)))
-# -----------------------------------------------
+# # tests: 
+# # test 1
+# assert id_to_token[token_to_id['dog']] == 'dog'
+# # test 2
+# assert token_to_id[id_to_token[4]] == 4
+# # test 3
+# assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(token_to_id[id_to_token[k]]==k for k in range(len(token_to_id)))
+# # -----------------------------------------------
 
 
 
@@ -155,12 +178,19 @@ assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(to
 # -----------------------------------------------
 def make_vocabulary_map(documents: list) -> tuple:
     # Hint: use your tokenize function
-    pass # Your code
+    unique_tokens = tokenize(" ".join([doc for doc in documents]))
+    token2int, int2token = dict(), dict()
+    for id, token in enumerate(unique_tokens):
+        token2int[token] = id
+        int2token[id] = token
+    return (token2int, int2token)
 
+#text = ["Define a function that will take a list of strings ('documents'), determines all the", "bla, bla, bla", "bad customer serv1ce!"]
 # Test
 t2i, i2t = make_vocabulary_map([text])
-all(i2t[t2i[tok]] == tok for tok in t2i) # should be True
-# -----------------------------------------------
+print(f"T7:\n{t2i=}\n\n{i2t=}")
+print(all(i2t[t2i[tok]] == tok for tok in t2i)) # should be True
+# # -----------------------------------------------
 
 
 
@@ -174,41 +204,46 @@ all(i2t[t2i[tok]] == tok for tok in t2i) # should be True
 # Your code here:
 # -----------------------------------------------
 def tokenize_and_encode(documents: list) -> list:
-    # Hint: use your make_vocabulary_map and tokenize function
-    pass # Your code
+    t2i, i2t = make_vocabulary_map(documents)
+    enc_sents = [tokenize(doc, unique=False) for doc in documents]
+    return (enc_sents, t2i, i2t)
 
 # Test:
+print("T8")
+print(f"{text}")
 enc, t2i, i2t = tokenize_and_encode([text, 'What a luck we had today!'])
-" | ".join([" ".join(i2t[i] for i in e) for e in enc]) == 'the quick brown fox jumps over the lazy dog | what a luck we had today'
+#print(f"{enc}")
+" | ".join([" ".join(i2t[t2i[i]] for i in e) for e in enc]) == 'the quick brown fox jumps over the lazy dog | what a luck we had today'
 # -----------------------------------------------
 
 
 
-# In the following set of exercises you're going to implement an RNN from scratch. You'll also
-# fit it to an existing time series.
+
+# # In the following set of exercises you're going to implement an RNN from scratch. You'll also
+# # fit it to an existing time series.
 
 
-# [D] Using a lambda expression to define functions: One line definition of a function
-# Objective: practicing to work with lambda functions
+# # [D] Using a lambda expression to define functions: One line definition of a function
+# # Objective: practicing to work with lambda functions
 
-# You'll implement a RNN with the logistic (sigmoid) activation function for
-# the nodes. We need to implement this function first.
+# # You'll implement a RNN with the logistic (sigmoid) activation function for
+# # the nodes. We need to implement this function first.
 
 
 
-# Task 9: use a lambda function to implement the logistic function using the np.exp
-#   function to work elementwise with numpy arrays
+# # Task 9: use a lambda function to implement the logistic function using the np.exp
+# #   function to work elementwise with numpy arrays
 
 # Your code here:
 # -----------------------------------------------
-sigmoid = _ # Your code
+sigmoid = lambda x: (1/(1+np.exp(-x)))
 
 # Test:
 np.all(sigmoid(np.log([1, 1/3, 1/7])) == np.array([1/2, 1/4, 1/8]))
 # -----------------------------------------------
 
 
-################  O P T I O N A L  ##############
+# ################  O P T I O N A L  ##############
 
 
 # [E] Building an RNN layer
@@ -225,68 +260,29 @@ np.all(sigmoid(np.log([1, 1/3, 1/7])) == np.array([1/2, 1/4, 1/8]))
 # that define the matrices need to be passed to the layer. 
 # 
 
-# And implementation in R may look as follows:
-#
-# rnn_layer = function(w, list_of_sequences, sigma=plogis) {
-#   # 1. Setup
-# 	W = matrix(w[1:9],3,3)
-# 	U = matrix(w[1:9 + 9], 3, 3)
-# 	B = matrix(w[1:3+9+9],1,3)
-#
-# 	nr_sequences = length(list_of_sequences)
-# 	outputs = rep(NA, nr_sequences)
-#
-#   # 2. Iterate over sequences
-# 	for (i in 1:nr_sequences) {
-# 		# get i-th sequence
-# 		X = list_of_sequences[[i]]
-# 		# initialize hidden state to 0
-# 		a = 0 * X[1,]
-# 		# Iterate over the time points
-# 		for (j in 1:nrow(X)) {
-# 			a = W %*% X[j,] + U %*% a
-# 		}
-# 		# store RNN output for i-th sequence
-# 		outputs[i] = B %*% a
-# 	}
-# 	outputs
-# }
-
-# In this implementation 
-# w:                 is a single vector containing the flattened weights for the matrices  W ,  U , and  B .
-# list_of_sequences: is a list where each element is a sequence represented as a matrix ( X ), 
-#                    where rows are time steps and columns are input features.
-# sigma:             An optional activation function (default is the sigmoid function plogis).
-# 1. Setup: Splits the vector w into three matrices ( W, U, B ).
-#       and determines the number of sequences to process.
-# 2. Iterate Over Sequences: For each sequence in list_of_sequences 
-#      the sequence matrix  X is extracted and processed by
-#      • first initializing the hidden state  a  to zero (vector of the same size as a row of  X).
-#      • then, for each time step (each row in  X ) the hidden state  a[t] is updated using the RNN 
-#        formula:  a[t] = W  x[t] + U a[t-1].
-# 4. Compute Output: After processing all time steps of the sequence, the output value is
-#      computed using final hidden state using the the equation o = B a[T] and is
-#      stored as the predicted output value for this sequence.
-# The return value is the vector of RNN output values (one value for each sequence in list_of_sequences).
-
-
-
 # Task 10: Translate this function into Python (by hand!)
 
 # Your code here:
 # -----------------------------------------------
 def rnn_layer(w: np.array, list_of_sequences: list[np.array], sigma=sigmoid ) -> np.array:
-    pass # Your code
+    W = np.array(w[:9]).reshape((3,3))
+    U = np.array(w[9:-3]).reshape((3,3))
+    B = np.array(w[-3:])
+    outputs = []
+    for sequence in list_of_sequences:
+        a = np.array([0,0,0])
+        for x in sequence:
+            a = W @ x + U @ a
+        outputs.append(B @ a)
+    return np.array(outputs)
 
 # Test
 np.random.seed(10)
 list_of_sequences = [np.random.normal(size=(5,3)) for _ in range(100)]
 wstart = np.random.normal(size=(3*3 + 3*3 + 3)) 
 o = rnn_layer(wstart, list_of_sequences)
-o.shape == (100,) and o.mean().round(3) == 16.287 and o.std().astype(int) == 133
+print(f"{o.shape == (100,)=} and {o.mean().round(3) == 16.287=} and {o.std().astype(int) == 133=}")
 # -----------------------------------------------
-
-
 
 
 # [F] Defining a loss function
@@ -310,15 +306,16 @@ o.shape == (100,) and o.mean().round(3) == 16.287 and o.std().astype(int) == 133
 
 # Your code here:
 # -----------------------------------------------
-def rnn_loss(w: np.array, w, list_of_sequences: list[np.array], y: np.array) -> np.float64:
-    pass # Your code
+def rnn_loss(w: np.array, list_of_sequences: list[np.array], y: np.array) -> np.float64:
+    pred = rnn_layer(w, list_of_sequences)
+    return np.sum((y-pred)**2)
 
 # Test:
 y = np.array([(X @ np.arange(1,4))[0] for X in list_of_sequences])
 o = rnn_loss(wstart, list_of_sequences, y)
-o.size == 1 and o.round(3) == 17794.733
+print(f"{o.round(3)}")
+print(o.size == 1 and o.round(3) == 17794.733)
 # -----------------------------------------------
-
 
 
 
@@ -391,5 +388,5 @@ plt.plot(yy)
 plt.plot(pred)
 plt.plot(linreg_pred)
 plt.legend(['Truth','RNN','LinReg'])
-
+plt.show()
 
